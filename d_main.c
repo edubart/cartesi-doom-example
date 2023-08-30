@@ -1166,6 +1166,7 @@ void D_DoomMain (void)
     int numiwadlumps;
 #endif
 
+    I_Init();
     I_AtExit(D_Endoom, false);
 
     // print banner
@@ -1201,7 +1202,7 @@ void D_DoomMain (void)
     if (M_CheckParm("-search"))
     {
         NET_MasterQuery();
-        exit(0);
+        I_Exit(0);
     }
 
     //!
@@ -1217,7 +1218,7 @@ void D_DoomMain (void)
     if (p)
     {
         NET_QueryAddress(myargv[p+1]);
-        exit(0);
+        I_Exit(0);
     }
 
     //!
@@ -1229,7 +1230,7 @@ void D_DoomMain (void)
     if (M_CheckParm("-localsearch"))
     {
         NET_LANQuery();
-        exit(0);
+        I_Exit(0);
     }
 
 #endif

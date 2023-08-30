@@ -51,6 +51,10 @@
 #include "w_wad.h"
 #include "z_zone.h"
 
+#include <riv.h>
+
+riv_context riv;
+
 #ifdef __MACOSX__
 #include <CoreFoundation/CFUserNotification.h>
 #endif
@@ -224,6 +228,10 @@ boolean I_ConsoleStdout(void)
 //
 // I_Init
 //
+void I_Init (void)
+{
+    riv_setup(&riv, myargc, myargv);
+}
 /*
 void I_Init (void)
 {
@@ -238,6 +246,19 @@ void I_BindVariables(void)
     I_BindSoundVariables();
 }
 */
+
+void I_Exit(int status)
+{
+#if ORIGCODE
+    SDL_Quit();
+#else
+    if (status == 0) {
+        riv_shutdown(&riv);
+    }
+#endif
+    exit(status);
+    while (true) {;}
+}
 
 //
 // I_Quit
@@ -257,11 +278,7 @@ void I_Quit (void)
         entry = entry->next;
     }
 
-#if ORIGCODE
-    SDL_Quit();
-
-    exit(0);
-#endif
+    I_Exit(0);
 }
 
 #if !defined(_WIN32) && !defined(__MACOSX__)
@@ -366,9 +383,7 @@ void I_Error (char *error, ...)
     if (already_quitting)
     {
         fprintf(stderr, "Warning: recursive call to I_Error detected.\n");
-#if ORIGCODE
-        exit(-1);
-#endif
+        I_Exit(-1);
     }
     else
     {
@@ -454,16 +469,7 @@ void I_Error (char *error, ...)
     }
 #endif
 
-    // abort();
-#if ORIGCODE
-    SDL_Quit();
-
-    exit(-1);
-#else
-    while (true)
-    {
-    }
-#endif
+    I_Exit(-1);
 }
 
 //

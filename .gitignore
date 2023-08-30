@@ -1,0 +1,6 @@
+*.o
+*.elftoc.c
+*.txt
+*.elf
+*.fs
+*.sqfs
