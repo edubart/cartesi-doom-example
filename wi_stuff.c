@@ -45,6 +45,8 @@
 
 #include "wi_stuff.h"
 
+#include "m_argv.h"
+
 //
 // Data needed to add patches to full screen intermission pics.
 // Patches are statistics messages, and animations.
@@ -771,6 +773,9 @@ static boolean		snl_pointeron = false;
 
 void WI_initShowNextLoc(void)
 {
+    if (M_CheckParm("-autoquit") > 0) {
+        I_Quit();
+    }
     state = ShowNextLoc;
     acceleratestage = 0;
     cnt = SHOWNEXTLOCDELAY * TICRATE;
