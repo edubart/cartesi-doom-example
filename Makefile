@@ -85,4 +85,6 @@ OBJS+=\
 	i_sound_riv.o \
 	i_video_riv.o
 
+COMP=gzip
+
 include ../demo-c.mk
