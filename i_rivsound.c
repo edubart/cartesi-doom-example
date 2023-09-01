@@ -22,7 +22,7 @@ extern riv_context riv;
 
 static boolean use_sfx_prefix;
 
-static void I_SDL_PrecacheSounds(sfxinfo_t *sounds, int num_sounds)
+static void I_RIV_PrecacheSounds(sfxinfo_t *sounds, int num_sounds)
 {
     // no-op
 }
@@ -54,7 +54,7 @@ static void GetSfxLumpName(sfxinfo_t *sfx, char *buf, size_t buf_len)
 //  for a given SFX name.
 //
 
-static int I_SDL_GetSfxLumpNum(sfxinfo_t *sfx)
+static int I_RIV_GetSfxLumpNum(sfxinfo_t *sfx)
 {
     char namebuf[9];
 
@@ -63,9 +63,13 @@ static int I_SDL_GetSfxLumpNum(sfxinfo_t *sfx)
     return W_GetNumForName(namebuf);
 }
 
-static void I_SDL_UpdateSoundParams(int handle, int vol, int sep)
+static void I_RIV_UpdateSoundParams(int handle, int vol, int sep)
 {
-    // TODO
+    riv_sound(&riv, &(riv_sound_desc){
+        .id = handle,
+        .volume = vol / 255.0f,
+        .pan = (sep - 127) / 127.0f,
+    });
 }
 
 //
@@ -81,97 +85,102 @@ static void I_SDL_UpdateSoundParams(int handle, int vol, int sep)
 //  is set, but currently not used by mixing.
 //
 
-static int I_SDL_StartSound(sfxinfo_t *sfxinfo, int channel, int vol, int sep)
+static int I_RIV_StartSound(sfxinfo_t *sfxinfo, int channel, int vol, int sep)
 {
-    int handle;
-    int lumpnum;
-    unsigned int lumplen;
-    int samplerate;
-    unsigned int length;
-    byte *data;
+    // load sound
+    if (sfxinfo->driver_data == NULL) {
+        int lumpnum;
+        unsigned int lumplen;
+        int samplerate;
+        unsigned int length;
+        byte *data;
 
-    // load the sound data
-    lumpnum = sfxinfo->lumpnum;
-    data = W_CacheLumpNum(lumpnum, PU_STATIC);
-    lumplen = W_LumpLength(lumpnum);
+        // load the sound data
+        lumpnum = sfxinfo->lumpnum;
+        data = W_CacheLumpNum(lumpnum, PU_STATIC);
+        lumplen = W_LumpLength(lumpnum);
 
-    // Check the header, and ensure this is a valid sound
-    if (lumplen < 8 || data[0] != 0x03 || data[1] != 0x00)
-    {
-        // Invalid sound
-        return -1;
+        // Check the header, and ensure this is a valid sound
+        if (lumplen < 8 || data[0] != 0x03 || data[1] != 0x00)
+        {
+            // Invalid sound
+            return -1;
+        }
+
+        // 16 bit sample rate field, 32 bit length field
+
+        samplerate = (data[3] << 8) | data[2];
+        length = (data[7] << 24) | (data[6] << 16) | (data[5] << 8) | data[4];
+
+        // If the header specifies that the length of the sound is greater than
+        // the length of the lump itself, this is an invalid sound lump
+
+        // We also discard sound lumps that are less than 49 samples long,
+        // as this is how DMX behaves - although the actual cut-off length
+        // seems to vary slightly depending on the sample rate.  This needs
+        // further investigation to better understand the correct
+        // behavior.
+
+        if (length > lumplen - 8 || length <= 48) {
+            return -1;
+        }
+
+        // The DMX sound library seems to skip the first 16 and last 16
+        // bytes of the lump - reason unknown.
+
+        data += 16;
+        length -= 32;
+
+        sfxinfo->driver_data = (uint8_t*)(size_t)(riv_make_sound_buffer(&riv, &(riv_sound_buffer_desc){
+            .format = RIV_SOUNDFORMAT_U8,
+            .channels = 1,
+            .sample_rate = samplerate,
+            .data = (riv_span_uint8){.data=(uint8_t*)(data+8), .size=length},
+        }));
+
+        // release lump
+        W_ReleaseLumpNum(lumpnum);
     }
 
-    // 16 bit sample rate field, 32 bit length field
-
-    samplerate = (data[3] << 8) | data[2];
-    length = (data[7] << 24) | (data[6] << 16) | (data[5] << 8) | data[4];
-
-    // If the header specifies that the length of the sound is greater than
-    // the length of the lump itself, this is an invalid sound lump
-
-    // We also discard sound lumps that are less than 49 samples long,
-    // as this is how DMX behaves - although the actual cut-off length
-    // seems to vary slightly depending on the sample rate.  This needs
-    // further investigation to better understand the correct
-    // behavior.
-
-    if (length > lumplen - 8 || length <= 48) {
-        return -1;
-    }
-
-    // The DMX sound library seems to skip the first 16 and last 16
-    // bytes of the lump - reason unknown.
-
-    data += 16;
-    length -= 32;
-
-    // load and play the sound
-    // TODO: cache
-    // TODO: channel
-    // TODO: vol pan
-    // TODO: sample rate
-    (void) samplerate;
-    handle = (int)riv_sound_play_from_memory(&riv, (riv_span_uint8){.data=data+8, .size=length}, vol);
-
-    // release lump
-    W_ReleaseLumpNum(lumpnum);
-
-    I_SDL_UpdateSoundParams(handle, vol, sep);
+    // play sound
+    int handle = (int)riv_sound(&riv, &(riv_sound_desc){
+        .buffer_id = (uint64_t)(size_t)(sfxinfo->driver_data),
+        .volume = vol / 255.0f,
+        .pan = (sep - 127) / 127.0f,
+    });
 
     return handle;
 }
 
-static void I_SDL_StopSound(int handle)
+static void I_RIV_StopSound(int handle)
 {
-    riv_sound_stop(&riv, handle);
+    riv_sound(&riv, &(riv_sound_desc){
+        .id = handle,
+        .fade_out = 0.3f,
+        .seek = -1.0f,
+    });
 }
 
-static boolean I_SDL_SoundIsPlaying(int handle)
+static boolean I_RIV_SoundIsPlaying(int handle)
 {
-    if (handle == 0)
-    {
-        return false;
-    }
-
-    return true;
+    return handle != 0;
 }
 
 //
 // Periodically called to update the sound system
 //
 
-static void I_SDL_UpdateSound(void)
+static void I_RIV_UpdateSound(void)
 {
 
 }
 
-static void I_SDL_ShutdownSound(void)
+static void I_RIV_ShutdownSound(void)
 {
 
 }
 
-static boolean I_SDL_InitSound(boolean _use_sfx_prefix)
+static boolean I_RIV_InitSound(boolean _use_sfx_prefix)
 {
     use_sfx_prefix = _use_sfx_prefix;
     return true;
@@ -191,13 +200,13 @@ sound_module_t sound_riv_module =
 {
     sound_riv_devices,
     arrlen(sound_riv_devices),
-    I_SDL_InitSound,
-    I_SDL_ShutdownSound,
-    I_SDL_GetSfxLumpNum,
-    I_SDL_UpdateSound,
-    I_SDL_UpdateSoundParams,
-    I_SDL_StartSound,
-    I_SDL_StopSound,
-    I_SDL_SoundIsPlaying,
-    I_SDL_PrecacheSounds,
+    I_RIV_InitSound,
+    I_RIV_ShutdownSound,
+    I_RIV_GetSfxLumpNum,
+    I_RIV_UpdateSound,
+    I_RIV_UpdateSoundParams,
+    I_RIV_StartSound,
+    I_RIV_StopSound,
+    I_RIV_SoundIsPlaying,
+    I_RIV_PrecacheSounds,
 };

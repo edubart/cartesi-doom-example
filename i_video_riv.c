@@ -104,7 +104,7 @@ void I_InitGraphics (void)
 {
     riv.framebuffer_desc->width = SCREENWIDTH;
     riv.framebuffer_desc->height = SCREENHEIGHT;
-    riv.framebuffer_desc->fps = 35;
+    riv.framebuffer_desc->target_fps = 35;
 
     I_VideoBuffer = riv.framebuffer;
     screenvisible = true;
