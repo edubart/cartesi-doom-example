@@ -218,7 +218,7 @@ void P_DeathThink (player_t* player)
 		player->damagecount--;
 	
 	static boolean quitasked = false;
-	if (!quitasked && player->viewheight == 6*FRACUNIT && player->damagecount == 0 && M_CheckParm("-autoquit") > 0) {
+	if (!quitasked && player->viewheight == 6*FRACUNIT && player->damagecount == 0 && M_CheckParm("-deathquit") > 0) {
 		quitasked = true;
 		M_QuitDOOM(0);
 	}
