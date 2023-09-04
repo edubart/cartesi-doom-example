@@ -86,4 +86,6 @@ OBJS+=\
 	i_sound_riv.o \
 	i_video_riv.o
 
+COMP=zstd -Xcompression-level 22
+
 include ../demo-c.mk

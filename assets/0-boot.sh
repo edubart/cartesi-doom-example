@@ -1,5 +1,4 @@
 #!/bin/sh
-cat doom1.wad > /dev/null
 if [ $# -eq 0 ]; then # no arguments
     exec ./doom \
         -iwad doom1.wad \
