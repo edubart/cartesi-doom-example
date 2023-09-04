@@ -197,13 +197,17 @@ void D_Display (void)
     }
 
     // save the current screen if about to wipe
-    if (gamestate != wipegamestate)
-		{
-		wipe = true;
-		wipe_StartScreen(0, 0, SCREENWIDTH, SCREENHEIGHT);
+    if (!M_ParmExists("-nowipe")) {
+        if (gamestate != wipegamestate)
+    		{
+    		wipe = true;
+    		wipe_StartScreen(0, 0, SCREENWIDTH, SCREENHEIGHT);
+        }
+        else
+        	wipe = false;
+    } else {
+        wipe = false;
     }
-    else
-    	wipe = false;
 
     if (gamestate == GS_LEVEL && gametic)
     	HU_Erase();
