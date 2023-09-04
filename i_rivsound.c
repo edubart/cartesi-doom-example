@@ -189,11 +189,6 @@ static boolean I_RIV_InitSound(boolean _use_sfx_prefix)
 static snddevice_t sound_riv_devices[] =
 {
     SNDDEVICE_SB,
-    SNDDEVICE_PAS,
-    SNDDEVICE_GUS,
-    SNDDEVICE_WAVEBLASTER,
-    SNDDEVICE_SOUNDCANVAS,
-    SNDDEVICE_AWE32,
 };
 
 sound_module_t sound_riv_module =
