@@ -137,7 +137,7 @@ void StatDump(void)
         return;
     }
     sum_stats_t sum = {0};
-    fprintf(stream, "{\n");
+    fprintf(stream, "JSON{\n");
     fprintf(stream, "\t\"levels\": [");
     for (int i = 0; i < num_captured_stats; ++i) {
         if (i != 0) {
@@ -173,10 +173,9 @@ void StatDump(void)
     fprintf(stream, "\t\"partime\": %d\n", sum.partime);
 
     fprintf(stream, "}\n");
+    fflush(stream);
 
     riv.outcard_len = ftell(stream);
-    riv.outcard_format = RIV_CARDFORMAT_JSON;
-    fflush(stream);
     fclose(stream);
 
     printf("Statistics captured for %i level(s)\n", num_captured_stats);
