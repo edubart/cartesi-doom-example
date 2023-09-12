@@ -1789,8 +1789,8 @@ void D_DoomMain (void)
     if (gamemode == commercial && W_CheckNumForName("map01") < 0)
         storedemo = true;
 
-    I_AtExit(StatDump, true);
-    DEH_printf("External statistics registered.\n");
+    // I_AtExit(StatDump, true);
+    // DEH_printf("External statistics registered.\n");
 
     //!
     // @arg <x>

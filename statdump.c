@@ -59,28 +59,25 @@ static void PrintPlayerStats(FILE *stream, sum_stats_t *sum, wbstartstruct_t *st
 
     /* Kills percentage */
     double kills = stats->maxkills > 0 ? (player->skills * 100.0) / stats->maxkills : 100.0;
-    fprintf(stream, "\t\t\"kills\": %.2f,\n"
-                    "\t\t\"numkills\": %d,\n"
-                    "\t\t\"maxkills\": %d,\n",
-                    kills, player->skills, stats->maxkills);
+    fprintf(stream, "\t\t\"pctkills\": %.2f,\n"
+                    "\t\t\"numkills\": %d,\n",
+                    kills, player->skills);
     sum->numkills += player->skills;
     sum->maxkills += stats->maxkills;
 
     /* Items percentage */
     double items = stats->maxitems > 0 ? (player->sitems * 100.0) / stats->maxitems : 100.0;
-    fprintf(stream, "\t\t\"items\": %.2f,\n"
-                    "\t\t\"numitems\": %d,\n"
-                    "\t\t\"maxitems\": %d,\n",
-                    items, player->sitems, stats->maxitems);
+    fprintf(stream, "\t\t\"pctitems\": %.2f,\n"
+                    "\t\t\"numitems\": %d,\n",
+                    items, player->sitems);
     sum->numitems += player->sitems;
     sum->maxitems += stats->maxitems;
 
     /* Secrets percentage */
     double secret = stats->maxsecret > 0 ? (player->ssecret * 100.0) / stats->maxsecret : 100.0;
-    fprintf(stream, "\t\t\"secrets\": %.2f,\n"
-                    "\t\t\"numsecrets\": %d,\n"
-                    "\t\t\"maxsecrets\": %d,\n",
-                    secret, player->ssecret, stats->maxsecret);
+    fprintf(stream, "\t\t\"pctsecrets\": %.2f,\n"
+                    "\t\t\"numsecrets\": %d,\n",
+                    secret, player->ssecret);
     sum->numsecrets += player->ssecret;
     sum->maxsecrets += stats->maxsecret;
 
@@ -104,6 +101,7 @@ static void PrintStats(FILE *stream, sum_stats_t *sum, wbstartstruct_t *stats)
     fprintf(stream, "\t\t\"partime\": %d\n", partime);
     sum->time += leveltime;
     sum->partime += partime;
+    sum->numlevels += 1;
 
     fprintf(stream, "\t}");
 }
@@ -130,15 +128,19 @@ void StatCopy(wbstartstruct_t *stats)
     StatDump();
 }
 
-void StatDump(void)
+void StatPartialDump(int kills, int items, int secrets, int time, bool died)
 {
     FILE *stream = fmemopen(riv.inoutbuffer, RIV_MMIOSIZE_INOUTBUFFER, "wb");
     if (!stream) {
         return;
     }
     sum_stats_t sum = {0};
+    sum.numkills = kills;
+    sum.numitems = items;
+    sum.numsecrets = secrets;
+    sum.time = time;
     fprintf(stream, "JSON{\n");
-    fprintf(stream, "\t\"levels\": [");
+    fprintf(stream, "\t\"level_stats\": [");
     for (int i = 0; i < num_captured_stats; ++i) {
         if (i != 0) {
             fprintf(stream, ", ");
@@ -146,37 +148,29 @@ void StatDump(void)
         PrintStats(stream, &sum, &captured_stats[i]);
     }
     fprintf(stream, "],\n");
-    fprintf(stream, "\t\"numlevels\": %d,\n", num_captured_stats);
-
-    /* Kills percentage */
-    double kills = sum.maxkills > 0 ? (sum.numkills * 100.0) / sum.maxkills : 100.0;
-    fprintf(stream, "\t\"kills\": %.2f,\n"
-                    "\t\"numkills\": %d,\n"
-                    "\t\"maxkills\": %d,\n",
-                    kills, sum.numkills, sum.maxkills);
-
-    /* Items percentage */
-    double items = sum.maxitems > 0 ? (sum.numitems * 100.0) / sum.maxitems : 100.0;
-    fprintf(stream, "\t\"items\": %.2f,\n"
-                    "\t\"numitems\": %d,\n"
-                    "\t\"maxitems\": %d,\n",
-                    items, sum.numitems, sum.maxitems);
-
-    /* Secrets percentage */
-    double secrets = sum.maxsecrets > 0 ? (sum.numsecrets * 100.0) / sum.maxsecrets : 100.0;
-    fprintf(stream, "\t\"secrets\": %.2f,\n"
-                    "\t\"numsecrets\": %d,\n"
-                    "\t\"maxsecrets\": %d,\n",
-                    secrets, sum.numsecrets, sum.maxsecrets);
-
+    int score = sum.numitems*5 +
+                sum.numkills*15 +
+                sum.numsecrets*60 +
+                sum.numlevels*120 - sum.time / TICRATE;
+    fprintf(stream, "\t\"score\": %d,\n", score);
+    fprintf(stream, "\t\"levels\": %d,\n", sum.numlevels);
+    fprintf(stream, "\t\"kills\": %d,\n", sum.numkills);
+    fprintf(stream, "\t\"items\": %d,\n", sum.numitems);
+    fprintf(stream, "\t\"secrets\": %d,\n", sum.numsecrets);
     fprintf(stream, "\t\"time\": %d,\n", sum.time);
-    fprintf(stream, "\t\"partime\": %d\n", sum.partime);
-
+    if (died) {
+        fprintf(stream, "\t\"died\": true\n");
+    } else {
+        fprintf(stream, "\t\"died\": false\n");
+    }
     fprintf(stream, "}\n");
     fflush(stream);
 
     riv.outcard_len = ftell(stream);
     fclose(stream);
+}
 
-    printf("Statistics captured for %i level(s)\n", num_captured_stats);
+void StatDump(void)
+{
+    StatPartialDump(0, 0, 0, 0, false);
 }
