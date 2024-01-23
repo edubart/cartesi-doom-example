@@ -23,8 +23,6 @@
 #include "w_wad.h"
 #include "z_zone.h"
 
-extern riv_context riv;
-
 int vanilla_keyboard_mapping = 1;
 
 int TranslateKey(int key) {
@@ -142,17 +140,17 @@ int TranslateKey(int key) {
 
 void I_GetEvent(void)
 {
-    for (int i=0;i<512;++i) {
+    for (int i=0;i<RIV_NUM_KEYCODE;++i) {
         int k = TranslateKey(i);
         if (k != 0) {
-            if(riv.keys[i].down) {
+            if(riv.keys[i].press) {
                 event_t event = {0};
                 event.type = ev_keydown;
                 event.data1 = k;
                 event.data2 = k;
                 D_PostEvent(&event);
             }
-            if(riv.keys[i].up) {
+            if(riv.keys[i].release) {
                 event_t event = {0};
                 event.type = ev_keyup;
                 event.data1 = k;

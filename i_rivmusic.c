@@ -17,10 +17,12 @@
 
 #include <riv.h>
 
-extern riv_context riv;
+//#define FEATURE_MAIN_MUSIC
+#ifdef FEATURE_MAIN_MUSIC
 uint64_t main_music_buffer_id = 0;
 uint64_t main_music_id = 0;
 int music_volume = 0;
+#endif
 
 static void I_RIV_ShutdownMusic(void)
 {
@@ -29,6 +31,7 @@ static void I_RIV_ShutdownMusic(void)
 
 static boolean I_RIV_InitMusic(void)
 {
+#ifdef FEATURE_MAIN_MUSIC
     FILE* fp = fopen("e1m1.mp3", "rb");
     if (!fp) {
         return false;
@@ -38,33 +41,38 @@ static boolean I_RIV_InitMusic(void)
     fseek(fp, 0, SEEK_SET);
     void *buf = malloc(len);
     fread(buf, 1, len, fp);
-    main_music_buffer_id = riv_make_sound_buffer(&riv, &(riv_sound_buffer_desc){
+    main_music_buffer_id = riv_make_soundbuffer(&(riv_soundbuffer_desc){
         .format = RIV_SOUNDFORMAT_MP3,
         .data = (riv_span_uint8){.data=(uint8_t*)(buf), .size=len},
     });
     free(buf);
     fclose(fp);
+#endif
     return true;
 }
 
 static void I_RIV_SetMusicVolume(int volume)
 {
+#ifdef FEATURE_MAIN_MUSIC
     music_volume = volume;
     if (main_music_id == 0) return;
-    riv_sound(&riv, &(riv_sound_desc){
+    riv_sound(&(riv_sound_desc){
         .id = main_music_id,
         .volume = volume / 127.0f,
     });
+#endif
 }
 
 static void I_RIV_PlaySong(void *handle, boolean looping)
 {
+#ifdef FEATURE_MAIN_MUSIC
     if (main_music_id != 0) return;
-    main_music_id = riv_sound(&riv, &(riv_sound_desc){
+    main_music_id = riv_sound(&(riv_sound_desc){
         .buffer_id = main_music_buffer_id,
         .volume = music_volume / 127.0f,
         .duration = -1.0f,
     });
+#endif
 }
 
 static void I_RIV_PauseSong(void)
@@ -89,12 +97,20 @@ static void I_RIV_UnRegisterSong(void *handle)
 
 static void *I_RIV_RegisterSong(void *data, int len)
 {
+#ifdef FEATURE_MAIN_MUSIC
     return (void*)(main_music_buffer_id);
+#else
+    return 0;
+#endif
 }
 
 static boolean I_RIV_MusicIsPlaying(void)
 {
+#ifdef FEATURE_MAIN_MUSIC
     return main_music_id != 0;
+#else
+    return 0;
+#endif
 }
 
 static void I_RIV_PollMusic(void)

@@ -53,8 +53,6 @@
 
 #include <riv.h>
 
-riv_context riv;
-
 #ifdef __MACOSX__
 #include <CoreFoundation/CFUserNotification.h>
 #endif
@@ -230,7 +228,14 @@ boolean I_ConsoleStdout(void)
 //
 void I_Init (void)
 {
-    riv_setup(&riv, myargc, myargv);
+    // enable keyboard tracking
+    for(int i=0;i<RIV_GAMEPAD_LEFT;++i) {
+        riv.tracked_keys[i] = true;
+    }
+    // disable game pad tracking
+    for(int i=RIV_GAMEPAD_LEFT;i<RIV_NUM_KEYCODE;++i) {
+        riv.tracked_keys[i] = false;
+    }
 }
 /*
 void I_Init (void)
@@ -251,10 +256,6 @@ void I_Exit(int status)
 {
 #if ORIGCODE
     SDL_Quit();
-#else
-    if (status == 0) {
-        riv_shutdown(&riv);
-    }
 #endif
     exit(status);
     while (true) {;}
@@ -288,7 +289,8 @@ void I_Quit (void)
 
 static int ZenityAvailable(void)
 {
-    return system(ZENITY_BINARY " --help >/dev/null 2>&1") == 0;
+    // return system(ZENITY_BINARY " --help >/dev/null 2>&1") == 0;
+    return 0;
 }
 
 // Escape special characters in the given string so that they can be

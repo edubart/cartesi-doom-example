@@ -31,8 +31,6 @@
 
 #include <riv.h>
 
-extern riv_context riv;
-
 // Array of end-of-level statistics that have been captured.
 
 #define MAX_CAPTURES 32

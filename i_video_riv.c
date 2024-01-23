@@ -22,8 +22,6 @@
 
 #include <riv.h>
 
-extern riv_context riv;
-
 int fb_scaling = 1;
 int usemouse = 0;
 
@@ -136,7 +134,7 @@ void I_UpdateNoBlit (void)
 
 void I_FinishUpdate (void)
 {
-    riv_present(&riv);
+    riv_present();
     extern void I_GetEvent(void);
     I_GetEvent();
 }

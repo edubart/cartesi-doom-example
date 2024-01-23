@@ -1,91 +1,94 @@
 NAME=doom
+DEMOLANG=c
 
 OBJS+=\
-	am_map.o \
-	d_event.o \
-	d_items.o \
-	d_iwad.o \
-	d_loop.o \
-	d_main.o \
-	d_mode.o \
-	d_net.o \
-	doomdef.o \
-	doomstat.o \
-	dstrings.o \
-	dummy.o \
-	f_finale.o \
-	f_wipe.o \
-	g_game.o \
-	hu_lib.o \
-	hu_stuff.o \
-	i_cdmus.o \
-	i_endoom.o \
-	i_joystick.o \
-	i_main.o \
-	i_scale.o \
-	i_system.o \
-	i_timer.o \
-	info.o \
-	m_argv.o \
-	m_bbox.o \
-	m_cheat.o \
-	m_config.o \
-	m_controls.o \
-	m_fixed.o \
-	m_menu.o \
-	m_misc.o \
-	m_random.o \
-	memio.o \
-	p_ceilng.o \
-	p_doors.o \
-	p_enemy.o \
-	p_floor.o \
-	p_inter.o \
-	p_lights.o \
-	p_map.o \
-	p_maputl.o \
-	p_mobj.o \
-	p_plats.o \
-	p_pspr.o \
-	p_saveg.o \
-	p_setup.o \
-	p_sight.o \
-	p_spec.o \
-	p_switch.o \
-	p_telept.o \
-	p_tick.o \
-	p_user.o \
-	r_bsp.o \
-	r_data.o \
-	r_draw.o \
-	r_main.o \
-	r_plane.o \
-	r_segs.o \
-	r_sky.o \
-	r_things.o \
-	s_sound.o \
-	sha1.o \
-	sounds.o \
-	st_lib.o \
-	st_stuff.o \
-	statdump.o \
-	tables.o \
-	v_video.o \
-	w_checksum.o \
-	w_file.o \
-	w_file_stdc_unbuffered.o \
-	w_main.o \
-	w_wad.o \
-	wi_stuff.o \
-	z_zone.o
+	build/am_map.o \
+	build/d_event.o \
+	build/d_items.o \
+	build/d_iwad.o \
+	build/d_loop.o \
+	build/d_main.o \
+	build/d_mode.o \
+	build/d_net.o \
+	build/doomdef.o \
+	build/doomstat.o \
+	build/dstrings.o \
+	build/dummy.o \
+	build/f_finale.o \
+	build/f_wipe.o \
+	build/g_game.o \
+	build/hu_lib.o \
+	build/hu_stuff.o \
+	build/i_cdmus.o \
+	build/i_endoom.o \
+	build/i_joystick.o \
+	build/i_main.o \
+	build/i_scale.o \
+	build/i_system.o \
+	build/i_timer.o \
+	build/info.o \
+	build/m_argv.o \
+	build/m_bbox.o \
+	build/m_cheat.o \
+	build/m_config.o \
+	build/m_controls.o \
+	build/m_fixed.o \
+	build/m_menu.o \
+	build/m_misc.o \
+	build/m_random.o \
+	build/memio.o \
+	build/p_ceilng.o \
+	build/p_doors.o \
+	build/p_enemy.o \
+	build/p_floor.o \
+	build/p_inter.o \
+	build/p_lights.o \
+	build/p_map.o \
+	build/p_maputl.o \
+	build/p_mobj.o \
+	build/p_plats.o \
+	build/p_pspr.o \
+	build/p_saveg.o \
+	build/p_setup.o \
+	build/p_sight.o \
+	build/p_spec.o \
+	build/p_switch.o \
+	build/p_telept.o \
+	build/p_tick.o \
+	build/p_user.o \
+	build/r_bsp.o \
+	build/r_data.o \
+	build/r_draw.o \
+	build/r_main.o \
+	build/r_plane.o \
+	build/r_segs.o \
+	build/r_sky.o \
+	build/r_things.o \
+	build/s_sound.o \
+	build/sha1.o \
+	build/sounds.o \
+	build/st_lib.o \
+	build/st_stuff.o \
+	build/statdump.o \
+	build/tables.o \
+	build/v_video.o \
+	build/w_checksum.o \
+	build/w_file.o \
+	build/w_file_stdc_unbuffered.o \
+	build/w_main.o \
+	build/w_wad.o \
+	build/wi_stuff.o \
+	build/z_zone.o
 
 OBJS+=\
-	i_input_riv.o \
-	i_rivsound.o \
-	i_rivmusic.o \
-	i_sound_riv.o \
-	i_video_riv.o
+	build/i_input_riv.o \
+	build/i_rivsound.o \
+	build/i_rivmusic.o \
+	build/i_sound_riv.o \
+	build/i_video_riv.o
 
 COMP=zstd -Xcompression-level 22
 
-include ../demo-c.mk
+include ../demo-base.mk
+
+CFLAGS+=-flto=auto

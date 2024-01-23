@@ -18,8 +18,6 @@
 
 #include <riv.h>
 
-extern riv_context riv;
-
 static boolean use_sfx_prefix;
 
 static void I_RIV_PrecacheSounds(sfxinfo_t *sounds, int num_sounds)
@@ -65,7 +63,7 @@ static int I_RIV_GetSfxLumpNum(sfxinfo_t *sfx)
 
 static void I_RIV_UpdateSoundParams(int handle, int vol, int sep)
 {
-    riv_sound(&riv, &(riv_sound_desc){
+    riv_sound(&(riv_sound_desc){
         .id = handle,
         .volume = vol / 255.0f,
         .pan = (sep - 127) / 127.0f,
@@ -131,7 +129,7 @@ static int I_RIV_StartSound(sfxinfo_t *sfxinfo, int channel, int vol, int sep)
         data += 16;
         length -= 32;
 
-        sfxinfo->driver_data = (uint8_t*)(size_t)(riv_make_sound_buffer(&riv, &(riv_sound_buffer_desc){
+        sfxinfo->driver_data = (uint8_t*)(size_t)(riv_make_soundbuffer(&(riv_soundbuffer_desc){
             .format = RIV_SOUNDFORMAT_U8,
             .channels = 1,
             .sample_rate = samplerate,
@@ -143,7 +141,7 @@ static int I_RIV_StartSound(sfxinfo_t *sfxinfo, int channel, int vol, int sep)
     }
 
     // play sound
-    int handle = (int)riv_sound(&riv, &(riv_sound_desc){
+    int handle = (int)riv_sound(&(riv_sound_desc){
         .buffer_id = (uint64_t)(size_t)(sfxinfo->driver_data),
         .volume = vol / 255.0f,
         .pan = (sep - 127) / 127.0f,
@@ -154,7 +152,7 @@ static int I_RIV_StartSound(sfxinfo_t *sfxinfo, int channel, int vol, int sep)
 
 static void I_RIV_StopSound(int handle)
 {
-    riv_sound(&riv, &(riv_sound_desc){
+    riv_sound(&(riv_sound_desc){
         .id = handle,
         .fade_out = 0.3f,
         .seek = -1.0f,

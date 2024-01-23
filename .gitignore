@@ -4,3 +4,5 @@
 *.elf
 *.fs
 *.sqfs
+build
+freedoom
