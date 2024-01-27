@@ -157,7 +157,7 @@ void StatPartialDump(int kills, int items, int secrets, int frames, bool died)
     } else {
         fprintf(stream, "\t\"died\": false\n");
     }
-    fprintf(stream, "}\n");
+    fprintf(stream, "}");
     fflush(stream);
 
     riv.outcard_len = ftell(stream);
