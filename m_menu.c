@@ -1167,6 +1167,10 @@ static char *M_SelectEndMessage(void)
 
 void M_QuitDOOM(int choice)
 {
+    if (M_CheckParm("-autoquit") > 0) {
+        I_Quit();
+        return;
+    }
     DEH_snprintf(endstring, sizeof(endstring), "%s\n\n" DOSY,
                  DEH_String(M_SelectEndMessage()));
 

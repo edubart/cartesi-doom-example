@@ -91,4 +91,4 @@ COMP=zstd -Xcompression-level 22
 
 include ../demo-base.mk
 
-CFLAGS+=-flto=auto
+CFLAGS+=-flto=auto -O2

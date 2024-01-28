@@ -7,6 +7,7 @@ if [ $# -eq 0 ]; then # no arguments
         -skill 3 -warp 1 1 \
         -levelquit 3 \
         -deathquit \
+        -autoquit \
         -nowipe \
         -nomenu
 else
