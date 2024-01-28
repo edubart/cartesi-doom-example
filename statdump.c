@@ -93,7 +93,7 @@ static void PrintStats(FILE *stream, sum_stats_t *sum, wbstartstruct_t *stats)
     if (stats->plyr[0].in) {
         PrintPlayerStats(stream, sum, stats, 0);
     }
-    fprintf(stream, "\t\t\"frames\": %d,\n", leveltime);
+    fprintf(stream, "\t\t\"frames\": %d\n", leveltime);
     sum->frames += leveltime;
     sum->numlevels += 1;
 
