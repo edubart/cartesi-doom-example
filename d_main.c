@@ -197,6 +197,7 @@ void D_Display (void)
     }
 
     // save the current screen if about to wipe
+#if 0
     if (!M_ParmExists("-nowipe")) {
         if (gamestate != wipegamestate)
     		{
@@ -208,6 +209,9 @@ void D_Display (void)
     } else {
         wipe = false;
     }
+#else
+    wipe = false;
+#endif
 
     if (gamestate == GS_LEVEL && gametic)
     	HU_Erase();

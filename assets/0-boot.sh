@@ -8,7 +8,6 @@ if [ $# -eq 0 ]; then # no arguments
         -levelquit 3 \
         -deathquit \
         -autoquit \
-        -nowipe \
         -nomenu
 else
     exec ./doom -iwad $WAD "$@"
