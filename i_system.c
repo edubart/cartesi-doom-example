@@ -228,13 +228,9 @@ boolean I_ConsoleStdout(void)
 //
 void I_Init (void)
 {
-    // enable keyboard tracking
-    for(int i=0;i<RIV_GAMEPAD_LEFT;++i) {
+    // enable tracking of all keys
+    for(int i=0;i<RIV_NUM_KEYCODE;++i) {
         riv.tracked_keys[i] = true;
-    }
-    // disable game pad tracking
-    for(int i=RIV_GAMEPAD_LEFT;i<RIV_NUM_KEYCODE;++i) {
-        riv.tracked_keys[i] = false;
     }
 }
 /*

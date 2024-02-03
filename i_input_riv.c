@@ -27,6 +27,23 @@ int vanilla_keyboard_mapping = 1;
 
 int TranslateKey(int key) {
     switch(key) {
+        case RIV_GAMEPAD_UP: return KEY_UPARROW;
+        case RIV_GAMEPAD_DOWN: return KEY_DOWNARROW;
+        case RIV_GAMEPAD_LEFT: return KEY_LEFTARROW;
+        case RIV_GAMEPAD_RIGHT: return KEY_RIGHTARROW;
+        case RIV_GAMEPAD_A1: return KEY_RSHIFT; // Run
+        case RIV_GAMEPAD_A2: return KEY_ENTER; // Message
+        case RIV_GAMEPAD_A3: return ' '; // Use
+        case RIV_GAMEPAD_A4: return KEY_BACKSPACE; // Back
+        case RIV_GAMEPAD_L1: return KEY_PREVWEAPON; // Previous weapon
+        case RIV_GAMEPAD_R1: return KEY_NEXTWEAPON; // Next weapon
+        case RIV_GAMEPAD_L2: return KEY_RALT; // Strafe
+        case RIV_GAMEPAD_R2: return KEY_RCTRL; // Fire
+        case RIV_GAMEPAD_SELECT: return KEY_ESCAPE; // Menu
+        case RIV_GAMEPAD_START: return KEY_TAB; // Map
+        // case RIV_GAMEPAD_L3: return ;
+        // case RIV_GAMEPAD_R3: return ;
+
         case RIV_KEYCODE_UP: return KEY_UPARROW;
         case RIV_KEYCODE_DOWN: return KEY_DOWNARROW;
         case RIV_KEYCODE_LEFT: return KEY_LEFTARROW;
@@ -39,7 +56,7 @@ int TranslateKey(int key) {
 
         case RIV_KEYCODE_RIGHT_CTRL: return KEY_RCTRL;
         case RIV_KEYCODE_LEFT_CTRL: return KEY_RCTRL;
-        case RIV_KEYCODE_RIGHT_SHIFT: return KEY_RCTRL;
+        case RIV_KEYCODE_RIGHT_SHIFT: return KEY_RSHIFT;
         case RIV_KEYCODE_LEFT_SHIFT: return KEY_RSHIFT;
         case RIV_KEYCODE_RIGHT_ALT: return KEY_RALT;
         case RIV_KEYCODE_LEFT_ALT: return KEY_RALT;
