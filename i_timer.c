@@ -33,7 +33,7 @@ static uint32_t basetime = 0;
 
 int I_GetTicks(void)
 {
-    return riv.time_ms;
+    return riv->time_ms;
 }
 
 int  I_GetTime (void)

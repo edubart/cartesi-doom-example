@@ -160,14 +160,14 @@ void I_GetEvent(void)
     for (int i=0;i<RIV_NUM_KEYCODE;++i) {
         int k = TranslateKey(i);
         if (k != 0) {
-            if(riv.keys[i].press) {
+            if(riv->keys[i].press) {
                 event_t event = {0};
                 event.type = ev_keydown;
                 event.data1 = k;
                 event.data2 = k;
                 D_PostEvent(&event);
             }
-            if(riv.keys[i].release) {
+            if(riv->keys[i].release) {
                 event_t event = {0};
                 event.type = ev_keyup;
                 event.data1 = k;
@@ -181,4 +181,3 @@ void I_GetEvent(void)
 void I_InitInput(void)
 {
 }
-

@@ -100,11 +100,11 @@ void cmap_to_rgb565(uint16_t * out, uint8_t * in, int in_pixels)
 
 void I_InitGraphics (void)
 {
-    riv.framebuffer_desc->width = SCREENWIDTH;
-    riv.framebuffer_desc->height = SCREENHEIGHT;
-    riv.framebuffer_desc->target_fps = 35;
+    riv->framebuffer_desc->width = SCREENWIDTH;
+    riv->framebuffer_desc->height = SCREENHEIGHT;
+    riv->framebuffer_desc->target_fps = 35;
 
-    I_VideoBuffer = riv.framebuffer;
+    I_VideoBuffer = riv->framebuffer;
     screenvisible = true;
 
     extern int I_InitInput(void);
@@ -179,7 +179,7 @@ void I_SetPalette (byte* palette)
         uint8_t r = gammatable[usegamma][*palette++];
         uint8_t g = gammatable[usegamma][*palette++];
         uint8_t b = gammatable[usegamma][*palette++];
-        riv.palette[i] = (b << 16) | (g << 8) | (r << 0);
+        riv->palette[i] = (b << 16) | (g << 8) | (r << 0);
     }
 
     /* Set new color map in kernel framebuffer driver */

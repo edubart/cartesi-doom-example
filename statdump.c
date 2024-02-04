@@ -124,7 +124,7 @@ void StatCopy(wbstartstruct_t *stats)
 
 void StatPartialDump(int kills, int items, int secrets, int frames, bool died)
 {
-    FILE *stream = fmemopen(riv.inoutbuffer, RIV_MMIOSIZE_INOUTBUFFER, "wb");
+    FILE *stream = fmemopen(riv->inoutbuffer, RIV_MMIOSIZE_INOUTBUFFER, "wb");
     if (!stream) {
         return;
     }
@@ -160,7 +160,7 @@ void StatPartialDump(int kills, int items, int secrets, int frames, bool died)
     fprintf(stream, "}");
     fflush(stream);
 
-    riv.outcard_len = ftell(stream);
+    riv->outcard_len = ftell(stream);
     fclose(stream);
 }
 
