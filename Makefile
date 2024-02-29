@@ -87,7 +87,7 @@ OBJS+=\
 	build/i_sound_riv.o \
 	build/i_video_riv.o
 
-COMP=zstd -Xcompression-level 22
+COMP=lzo
 
 include ../demo-base.mk
 
